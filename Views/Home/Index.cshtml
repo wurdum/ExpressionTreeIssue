@@ -1,0 +1,28 @@
+﻿@using ExpressionTreeIssue.Controllers
+@model Model
+
+<p>Fails</p>
+@foreach (var row in Model.Rows) {
+    foreach (var cell in row.Cells) {
+        <div>
+            <p>Row: @row.Id, Cell: @cell.Id</p>
+            <p>Input name: @Model.GetElementName(m => m.Rows.Get(row).Cells.Get(cell).Value)</p>
+        </div>
+        
+    }
+}
+
+@*
+<p>Works as expected</p>
+@foreach (var r in Model.Rows) {
+    foreach (var c in r.Cells) {
+        var row = r;
+        var cell = c;
+        <div>
+            <p>Row: @row.Id, Cell: @cell.Id</p>
+            <p>Input name: @Model.GetElementName(m => m.Rows.Get(row).Cells.Get(cell).Value)</p>
+        </div>
+        
+    }
+}
+*@
