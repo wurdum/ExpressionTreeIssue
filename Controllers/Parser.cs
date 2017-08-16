@@ -55,24 +55,11 @@ namespace ExpressionTreeIssue.Controllers
         }
 
         private void VisitMethod(MemberExpression caller, MemberExpression arg, List<Segment> segments) {
-            segments.Add(Segment.Collection((PropertyInfo)caller.Member, GetArgumentId(arg)));
-        }
-
-        private int GetArgumentId(MemberExpression arg) {
-            var argumentContainer = FindArgumentsContainer(arg);
-            var id = ((IEntity)((FieldInfo)arg.Member).GetValue(argumentContainer)).Id;
-            return id;
-        }
-
-        private static object FindArgumentsContainer(MemberExpression arg) {
-            var expression = arg.Expression;
-            do {
-                var constant = expression as ConstantExpression;
-                if (constant != null)
-                    return constant.Value;
-
-                expression = (expression as MemberExpression).Expression;
-            } while (true);
+            var converted = Expression.Convert(arg, typeof(IEntity));
+            var lambda = Expression.Lambda<Func<IEntity>>(converted);
+            var entity = lambda.Compile()();
+            
+            segments.Add(Segment.Collection((PropertyInfo)caller.Member, entity.Id));
         }
     }
 }
